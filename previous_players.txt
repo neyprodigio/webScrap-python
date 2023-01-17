@@ -1,0 +1,1 @@
+[{"jogador": "Takefusa Kubo"}, {"jogador": "Mohamed-Ali Cho"}, {"jogador": "Luna Carlos Fernandez"}, {"jogador": "Ander Martin"}, {"jogador": "Mikel Oyarzabal"}, {"jogador": "Alexander Sorloth"}]
