@@ -1,1 +1,21 @@
-[{"jogador": "Takefusa Kubo"}, {"jogador": "Mohamed-Ali Cho"}, {"jogador": "Luna Carlos Fernandez"}, {"jogador": "Ander Martin"}, {"jogador": "Mikel Oyarzabal"}, {"jogador": "Alexander Sorloth"}]
+Nahuel Molina
+Alvaro Aguado
+Axel Witsel
+Niguez Saul
+Sergi Guardiola
+Rodrigo De Paul
+David Torres
+Mario Hermoso
+Geoffrey Kondogbia
+Jordi Masip
+Memphis Depay
+Gonzalo Plata
+Lucas Rosa
+Ivan Fresneda
+Pedreno Oscar Plano
+Shon Weissman
+Jawad El Yamiq
+Angel Correa
+Mesa Roque
+Jan Oblak
+Yannick Carrasco

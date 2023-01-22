@@ -18,9 +18,17 @@ import undetected_chromedriver.v2 as uc
 from plyer import notification
 
 previous_players = set()
+removed_players = set()
+
+# Carrega jogadores removidos do arquivo
+with open("removed_players.txt", "r") as f:
+    for line in f:
+        removed_players.add(line.strip())
+
 with open("previous_players.txt", "a+") as f:
     for line in f:
         previous_players.add(line.strip())
+
 url = input("Insira a URL da partida a ser monitorada: ")
 interval = int(input("Insira o intervalo de verificação em segundos: "))
 driver = uc.Chrome()
@@ -28,49 +36,53 @@ while True:
 
     driver.get(url)
     driver.maximize_window()
-    time.sleep(8)
-    mercado = WebDriverWait(driver, timeout=30).until(EC.invisibility_of_element((By.CSS_SELECTOR, 'div.ipe-GridHeaderTabLink:nth-child(9) > div:nth-child(1)'))).click()
+    time.sleep(6)
+    #close_cock = driver.find_element(By.CSS_SELECTOR, '.ccm-CookieConsentPopup_Accept')
+    
     time.sleep(1)
-    show_more = WebDriverWait(driver, timeout=10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.sip-ShowMore_Link'))).click() 
-    time.sleep(3)
-    #close_list = driver.find_element(By.CSS_SELECTOR, '.sip-MarketGroup_Open > div:nth-child(1)').click()
-    #show_carts = driver.find_element(By.CSS_SELECTOR, 'div.sip-MarketGroup:nth-child(4) > div:nth-child(1) > div:nth-child(1)').click()
-    #time.sleep(5)
+    mercado = WebDriverWait(driver, timeout=60).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'div.ipe-GridHeaderTabLink:nth-child(9) > div:nth-child(1)'))).click()
+    time.sleep(1)
+    close_Gol = WebDriverWait(driver, timeout=60).until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.sip-MarketGroup_Open > div:nth-child(1)'))).click()
+    time.sleep(1)
+    show_cart = WebDriverWait(driver, timeout=60).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'div.sip-MarketGroup:nth-child(4) > div:nth-child(1) > div:nth-child(1)'))).click()
+    time.sleep(1) 
+ 
     game_name = driver.find_element(By.CSS_SELECTOR, '.ipe-EventHeader_Fixture')
     current_game = str(game_name.text)
     time.sleep(1)
-    players_list = driver.find_elements(By.CSS_SELECTOR,'div.sip-SubInParticipant > div')
+    players_list = driver.find_elements(By.CSS_SELECTOR,'div.sip-TotalBandParticipant > span:nth-child(1)')
     current_players = set({item.get_attribute('outerText') for item in players_list})
     # Identifica jogadores que sairam da lista
-    time.sleep(1)
-    removed_players = previous_players.difference(current_players)
+    removed_players = removed_players.union(previous_players.difference(current_players))
+    removed_players = removed_players.difference(current_players)
     if removed_players:
-       notification.notify(
-       title=('Jogador saiu da lista no jogo: '+current_game),
-       message=str(removed_players),
-       timeout=5
-    )
        print("Jogadores que saíram da lista: ", removed_players)
     print("Jogadores que saíram da lista: ", len(removed_players))    
     
     # Identifica jogadores que voltaram para a lista
-    returned_players = previous_players.intersection(current_players)
-    returned_players = returned_players.difference(current_players)
+    returned_players = current_players.intersection(removed_players)
     if returned_players:
-       notification.notify(
-       title=('Voltou pra lista no jogo: '+current_game),
-       message=str(returned_players),
-       timeout=5
+      notification.notify(
+      title=('Voltou pra lista no jogo: '+current_game),
+      message=str(returned_players),
+      timeout=5
     )
-       print("Jogadores que voltaram para a lista: ", returned_players)
+      print("Jogadores que voltaram para a lista: ", returned_players)
     print("Jogadores que voltaram para a lista: ", len(returned_players))
-    
-    # Atualiza a lista anterior de jogadores
+
+# Atualiza a lista anterior de jogadores
     previous_players = current_players
 
-    previous_players_list = [{"jogador": player} for player in previous_players]
-    with open("previous_players.txt", "w") as pp:
-        json.dump(previous_players_list, pp)
+# Save previous_players to a file
+    with open("previous_players.txt", "w") as f:
+         for player in previous_players:
+            f.write(player + "\n")
+
+# Save removed_players to a file
+    with open("removed_players.txt", "w") as f:
+         for player in removed_players:
+            f.write(player + "\n")
+
     time.sleep(interval)
 
 
